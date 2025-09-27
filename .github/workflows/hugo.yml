@@ -2,9 +2,9 @@ name: Deploy Hugo site to Pages
 
 on:
   push:
-    branches: ["main"]  # или "master", если у вас такая ветка
+    branches: ["master"]
   pull_request:
-    branches: ["main"]
+    branches: ["master"]
 
 permissions:
   contents: read
