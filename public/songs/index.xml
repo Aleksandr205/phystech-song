@@ -2,17 +2,17 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/">
   <channel>
     <title>Песни on Физтех Песня</title>
-    <link>http://localhost:1313/phystech-song/songs/</link>
+    <link>http://localhost:40242/phystech-song/songs/</link>
     <description>Recent content in Песни on Физтех Песня</description>
     <generator>Hugo -- 0.150.1</generator>
     <language>ru-ru</language>
     <lastBuildDate>Thu, 01 Jan 1970 03:33:02 +0300</lastBuildDate>
-    <atom:link href="http://localhost:1313/phystech-song/songs/index.xml" rel="self" type="application/rss+xml" />
+    <atom:link href="http://localhost:40242/phystech-song/songs/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>Физтех — это дом</title>
-      <link>http://localhost:1313/phystech-song/songs/fizteh-eto-dom/</link>
+      <link>http://localhost:40242/phystech-song/songs/fizteh-eto-dom/</link>
       <pubDate>Thu, 01 Jan 1970 03:33:02 +0300</pubDate>
-      <guid>http://localhost:1313/phystech-song/songs/fizteh-eto-dom/</guid>
+      <guid>http://localhost:40242/phystech-song/songs/fizteh-eto-dom/</guid>
       <description>&lt;p&gt;&lt;strong&gt;Куплет 1&lt;/strong&gt;&lt;br&gt;
 Физтех — это дом, где наука и песня идут рядом,&lt;br&gt;
 Где ночами горят огни в лабораториях,&lt;br&gt;

@@ -2,17 +2,17 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/">
   <channel>
     <title>Концерты on Физтех Песня</title>
-    <link>http://localhost:1313/phystech-song/concerts/</link>
+    <link>http://localhost:40242/phystech-song/concerts/</link>
     <description>Recent content in Концерты on Физтех Песня</description>
     <generator>Hugo -- 0.150.1</generator>
     <language>ru-ru</language>
     <lastBuildDate>Thu, 05 Oct 2023 00:00:00 +0000</lastBuildDate>
-    <atom:link href="http://localhost:1313/phystech-song/concerts/index.xml" rel="self" type="application/rss+xml" />
+    <atom:link href="http://localhost:40242/phystech-song/concerts/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>70 лет в песнях: юбилейный концерт, 5 октября 2023</title>
-      <link>http://localhost:1313/phystech-song/concerts/2023-10-05-yubilej/</link>
+      <link>http://localhost:40242/phystech-song/concerts/2023-10-05-yubilej/</link>
       <pubDate>Thu, 05 Oct 2023 00:00:00 +0000</pubDate>
-      <guid>http://localhost:1313/phystech-song/concerts/2023-10-05-yubilej/</guid>
+      <guid>http://localhost:40242/phystech-song/concerts/2023-10-05-yubilej/</guid>
       <description>&lt;p&gt;Юбилейный концерт, посвящённый 69-летию объединения (70-летие — в 2024).&lt;br&gt;
 Выступали ветераны 1970-х и нынешние студенты МФТИ.&lt;/p&gt;
 &lt;div style=&#34;position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden;&#34;&gt;
