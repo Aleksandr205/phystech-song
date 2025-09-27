@@ -1,4 +1,4 @@
-baseURL: "http://localhost:1313/"
+baseURL: "https://aleksandr205.github.io/phystech-song/"
 languageCode: "ru-ru"
 title: "Физтех Песня"
 theme: "PaperMod"
