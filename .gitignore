@@ -1,0 +1,17 @@
+# Hugo
+/public/
+/resources/_gen/
+.hugo_build.lock
+
+# IDE / редакторы
+.vscode/
+.idea/
+*.swp
+.DS_Store
+
+# ОС
+Thumbs.db
+desktop.ini
+
+# Локальные конфиги (если используете)
+config.local.yaml

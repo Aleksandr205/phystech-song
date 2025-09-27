@@ -1,0 +1,81 @@
+{{ define "main" }}
+<style>
+  .hero {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 2rem;
+    align-items: center;
+    padding: 2rem 1rem;
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+  .hero-image {
+    flex: 1;
+    min-width: 300px;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  }
+  .hero-image img {
+    width: 100%;
+    height: auto;
+    display: block;
+  }
+  .hero-content {
+    flex: 1;
+    min-width: 300px;
+  }
+  .hero-content h1 {
+    font-size: 2.2rem;
+    margin-bottom: 1.5rem;
+    line-height: 1.3;
+  }
+  .hero-links {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+  .hero-links li {
+    margin-bottom: 1rem;
+  }
+  .hero-links a {
+    font-size: 1.2rem;
+    text-decoration: none;
+    color: #1a1a1a;
+    padding: 0.5rem 0;
+    display: inline-block;
+    border-bottom: 1px solid transparent;
+    transition: border-color 0.2s;
+  }
+  .hero-links a:hover {
+    border-bottom-color: #0066cc;
+    color: #0066cc;
+  }
+  @media (max-width: 768px) {
+    .hero {
+      flex-direction: column;
+      text-align: center;
+    }
+    .hero-links a {
+      font-size: 1.1rem;
+    }
+  }
+</style>
+
+<div class="hero">
+  <div class="hero-image">
+    <img src="{{ "hero.webp" | absURL }}" alt="Физтех Песня — архив песен и истории">
+  </div>
+  <div class="hero-content">
+    <h1>Добро пожаловать в архив<br><strong>«Физтех Песня»</strong></h1>
+    <p>Студенческое объединение МФТИ с 70-летней историей. Здесь — песни, воспоминания и душа Физтеха.</p>
+    <ul class="hero-links">
+      <li><a href="/about/">Об объединении</a></li>
+      <li><a href="/timeline/">История (1954–2024)</a></li>
+      <li><a href="/songs/">Песни — тексты и аудио</a></li>
+      <li><a href="/concerts/">Концерты — полные записи</a></li>
+    </ul>
+  </div>
+</div>
+
+{{ end }}
