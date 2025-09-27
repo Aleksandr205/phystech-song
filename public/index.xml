@@ -9,11 +9,14 @@
     <lastBuildDate>Wed, 10 Apr 2024 00:00:00 +0000</lastBuildDate>
     <atom:link href="http://localhost:40242/phystech-song/index.xml" rel="self" type="application/rss+xml" />
     <item>
-      <title>История</title>
-      <link>http://localhost:40242/phystech-song/timeline/</link>
+      <title>О нас</title>
+      <link>http://localhost:40242/phystech-song/about/</link>
       <pubDate>Wed, 10 Apr 2024 00:00:00 +0000</pubDate>
-      <guid>http://localhost:40242/phystech-song/timeline/</guid>
-      <description>&lt;h3 id=&#34;хронология-физтех-песни&#34;&gt;Хронология «Физтех Песни»&lt;/h3&gt;
+      <guid>http://localhost:40242/phystech-song/about/</guid>
+      <description>&lt;h3 id=&#34;о-нас&#34;&gt;О нас»&lt;/h3&gt;
+&lt;p&gt;&lt;strong&gt;«Физтех Песня»&lt;/strong&gt; — одно из старейших студенческих музыкальных объединений России. Основано в 1954 году на Московском физико-техническом институте (МФТИ).&lt;/p&gt;
+&lt;p&gt;За более чем 70 лет через коллектив прошли сотни студентов — физиков, математиков, инженеров, — которые пели о науке, дружбе, любви и жизни в стенах Физтеха.&lt;/p&gt;
+&lt;h3 id=&#34;хронология-физтех-песни&#34;&gt;Хронология «Физтех Песни»&lt;/h3&gt;
 &lt;ul&gt;
 &lt;li&gt;&lt;strong&gt;1954&lt;/strong&gt; — основание объединения студентами МФТИ.&lt;/li&gt;
 &lt;li&gt;&lt;strong&gt;1960–1970&lt;/strong&gt; — расцвет самодеятельной песни; выступления на Всесоюзных фестивалях.&lt;/li&gt;
@@ -28,14 +31,39 @@
 &lt;p&gt;У вас есть фото, записи или воспоминания? Присылайте на &lt;strong&gt;&lt;a href=&#34;mailto:fizteh.pesnya@gmail.com&#34;&gt;fizteh.pesnya@gmail.com&lt;/a&gt;&lt;/strong&gt; — мы добавим в архив!&lt;/p&gt;</description>
     </item>
     <item>
-      <title>Об объединении</title>
-      <link>http://localhost:40242/phystech-song/about/</link>
+      <title>О нас</title>
+      <link>http://localhost:40242/phystech-song/timeline/</link>
       <pubDate>Wed, 10 Apr 2024 00:00:00 +0000</pubDate>
-      <guid>http://localhost:40242/phystech-song/about/</guid>
+      <guid>http://localhost:40242/phystech-song/timeline/</guid>
       <description>&lt;p&gt;&lt;strong&gt;«Физтех Песня»&lt;/strong&gt; — одно из старейших студенческих музыкальных объединений России. Основано в 1954 году на Московском физико-техническом институте (МФТИ).&lt;/p&gt;
 &lt;p&gt;За более чем 70 лет через коллектив прошли сотни студентов — физиков, математиков, инженеров, — которые пели о науке, дружбе, любви и жизни в стенах Физтеха.&lt;/p&gt;
-&lt;p&gt;Сегодня «Физтех Песня» продолжает традиции: мы выступаем на фестивалях, записываем новые песни и передаём эстафету новым поколениям.&lt;/p&gt;
-&lt;p&gt;Если вы — бывший участник или просто неравнодушный, напишите нам! Мы рады пополнить архив вашими воспоминаниями.&lt;/p&gt;</description>
+&lt;h3 id=&#34;хронология-физтех-песни&#34;&gt;Хронология «Физтех Песни»&lt;/h3&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;1954&lt;/strong&gt; — основание объединения студентами МФТИ.&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;1960–1970&lt;/strong&gt; — расцвет самодеятельной песни; выступления на Всесоюзных фестивалях.&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;1975&lt;/strong&gt; — первый магнитофонный альбом, записанный в подвале общежития.&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;1985&lt;/strong&gt; — концерт в ЦДРИ (Москва), участие в фестивале «Зелёные волны».&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;1990-е&lt;/strong&gt; — временный упадок, но сохранение традиций.&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;2003&lt;/strong&gt; — возрождение: новое поколение участников.&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;2014&lt;/strong&gt; — 60-летие: большой юбилейный концерт в Долгопрудном.&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;2024&lt;/strong&gt; — 70 лет «Физтех Песни»!&lt;/li&gt;
+&lt;/ul&gt;
+&lt;blockquote&gt;
+&lt;p&gt;У вас есть фото, записи или воспоминания? Присылайте на &lt;strong&gt;&lt;a href=&#34;mailto:fizteh.pesnya@gmail.com&#34;&gt;fizteh.pesnya@gmail.com&lt;/a&gt;&lt;/strong&gt; — мы добавим в архив!&lt;/p&gt;</description>
+    </item>
+    <item>
+      <title>Участники</title>
+      <link>http://localhost:40242/phystech-song/members/</link>
+      <pubDate>Wed, 10 Apr 2024 00:00:00 +0000</pubDate>
+      <guid>http://localhost:40242/phystech-song/members/</guid>
+      <description>&lt;h3 id=&#34;участники-физтех-песни&#34;&gt;Участники Физтех Песни»&lt;/h3&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;Первый Человек&lt;/strong&gt; — выдающаяся личность.&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Человек №2&lt;/strong&gt; — ещё круче&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Тюленев А. И.&lt;/strong&gt; — Генерал Математического Анализа&lt;/li&gt;
+&lt;/ul&gt;
+&lt;blockquote&gt;
+&lt;p&gt;Если вы были участником Физтех Песни, обязательно напишите нам! (а почты у нас нет)&lt;/p&gt;&lt;/blockquote&gt;</description>
     </item>
     <item>
       <title>70 лет в песнях: юбилейный концерт, 5 октября 2023</title>

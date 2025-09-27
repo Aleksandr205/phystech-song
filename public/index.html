@@ -7,163 +7,170 @@
   <title>Физтех Песня</title>
   <meta name="description" content="Студенческое объединение МФТИ с 70-летней историей. Архив песен, концертов и воспоминаний.">
   <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
 
-    body, html {
-      height: 100%;
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-    }
+  body, html {
+    height: 100%;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  }
 
-    .hero {
-      position: relative;
-      width: 100%;
-      height: 100vh;
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;  
-      align-items: center;
-      padding: 0 20px;
-      overflow: hidden;
-    }
+  .hero {
+    position: relative;
+    width: 100%;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 40px;  
+    overflow: hidden;
+  }
 
-    .hero::before {
-      content: "";
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background-image: url('http://localhost:40242/phystech-song/hero.jpg');
-      background-size: cover;
-      background-position: center;
-      background-repeat: no-repeat;
-      z-index: -2;
-    }
+  .hero::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image: url('http://localhost:40242/phystech-song/hero.jpg');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    z-index: -2;
+  }
 
-    .hero::after {
-      content: "";
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: rgba(0, 0, 0, 0.25);
-      z-index: -1;
-    }
+  .hero::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.25);
+    z-index: -1;
+  }
 
-    .hero-title {
-      color: white;
-      font-size: 6rem;
-      font-weight: 800;
-      line-height: 1.1;
-      text-shadow: 0 2px 14px rgba(0,0,0,0.4);
-      z-index: 10;
-      text-align: center;
-      max-width: 90%;
-      margin-top: 6vh;  
-    }
+  .hero-title {
+    color: white;
+    font-size: 6rem;
+    font-weight: 800;
+    line-height: 1.1;
+    text-shadow: 0 2px 14px rgba(0,0,0,0.4);
+    z-index: 10;
+    text-align: center;
+    max-width: 90%;
+    margin-top: 6vh;
+  }
 
-    .hero-links-container {
-      display: flex;
-      justify-content: space-between;
-      width: 100%;
-      max-width: 1200px;
-      margin-bottom: 100px;  
-      z-index: 10;
-    }
+  .hero-links-container {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    max-width: 1200px;
+    margin-bottom: 100px;
+    z-index: 10;
+  }
 
-    .hero-links-column {
-      list-style: none;
-      padding: 0;
-      margin: 0;
-      display: flex;
-      flex-direction: column;
-      gap: 2.2rem;
-    }
+  .hero-links-column {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 2.2rem;
+  }
 
-    .hero-links-column a {
-      color: white;
-      font-size: 2rem;
-      text-decoration: none;
-      padding: 0.75rem 1.2rem;
-      border-radius: 30px;
-      background: rgba(255, 255, 255, 0.22);
-      backdrop-filter: blur(6px);
-      transition: all 0.3s ease;
-      width: 280px;
-      text-align: center;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.15);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      height: 70px;
-    }
-
-    .hero-links-column a:hover {
-      background: rgba(255, 255, 255, 0.38);
-      transform: translateY(-3px);
-      box-shadow: 0 5px 16px rgba(0,0,0,0.28);
-    }
-
-    footer {
-      position: absolute;
-      bottom: 12px;
-      width: 100%;
-      color: rgba(255, 255, 255, 0.8);
-      font-size: 0.95rem;
-      text-align: center;
-      z-index: 9;
-    }
-
+  .hero-links-column a {
+    color: white;
+    font-size: 2rem;
+    text-decoration: none;
+    padding: 0.75rem 1.2rem;
+    border-radius: 30px;
      
-    @media (max-width: 900px) {
-      .hero-links-container {
-        flex-direction: column;
-        font-size: 4.0rem;
-        align-items: center;
-        gap: 2.4rem;
-        margin-bottom: 60px;
-      }
-      .hero-links-column a {
-        width: 260px;
-      }
-    }
+    background: rgba(0, 0, 0, 0.45);
+    backdrop-filter: blur(6px);
+    transition: all 0.3s ease;
+    width: 280px;
+    text-align: center;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.25);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 70px;
+  }
 
-    @media (max-width: 800px) {
-      .hero-title {
-        font-size: 3.8rem;
-        margin-top: 5vh;
-      }
-      .hero-links-column a {
-        font-size: 1.7rem;
-        width: 240px;
-        height: 60px;
-      }
-    }
+  .hero-links-column a:hover {
+     
+    background: rgba(0, 0, 0, 0.6);
+    transform: translateY(-3px);
+    box-shadow: 0 5px 16px rgba(0,0,0,0.35);
+  }
 
-    @media (max-width: 550px) {
-      .hero-title {
-        font-size: 2.9rem;
-        margin-top: 4vh;
-      }
-      .hero-links-column a {
-        font-size: 1.4rem;
-        width: 220px;
-        height: 50px;
-      }
-      .hero-links-container {
-        margin-bottom: 50px;
-      }
-      footer {
-        font-size: 0.9rem;
-        bottom: 8px;
-      }
+  footer {
+    position: absolute;
+    bottom: 12px;
+    width: 100%;
+    color: rgba(255, 255, 255, 0.8);
+    font-size: 0.95rem;
+    text-align: center;
+    z-index: 9;
+  }
+
+   
+  @media (max-width: 900px) {
+    .hero {
+      padding: 0 24px;  
     }
-  </style>
+    .hero-links-container {
+      flex-direction: column;
+      align-items: center;
+      gap: 2.4rem;
+      margin-bottom: 60px;
+    }
+    .hero-links-column a {
+      width: 260px;
+    }
+  }
+
+  @media (max-width: 800px) {
+    .hero-title {
+      font-size: 3.8rem;
+      margin-top: 5vh;
+    }
+    .hero-links-column a {
+      font-size: 1.7rem;
+      width: 240px;
+      height: 60px;
+    }
+  }
+
+  @media (max-width: 550px) {
+    .hero {
+      padding: 0 20px;  
+    }
+    .hero-title {
+      font-size: 2.9rem;
+      margin-top: 4vh;
+    }
+    .hero-links-column a {
+      font-size: 1.4rem;
+      width: 220px;
+      height: 50px;
+    }
+    .hero-links-container {
+      margin-bottom: 50px;
+    }
+    footer {
+      font-size: 0.9rem;
+      bottom: 8px;
+    }
+  }
+</style>
 </head>
 <body>
   <div class="hero">
@@ -172,7 +179,7 @@
     <div class="hero-links-container">
       <ul class="hero-links-column">
         <li><a href="http://localhost:40242/phystech-song/about/">О нас</a></li>
-        <li><a href="http://localhost:40242/phystech-song/timeline/">История</a></li>
+        <li><a href="http://localhost:40242/phystech-song/members/">Участники</a></li>
       </ul>
       <ul class="hero-links-column">
         <li><a href="http://localhost:40242/phystech-song/songs/">Песни</a></li>
