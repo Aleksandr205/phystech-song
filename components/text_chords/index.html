@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Текст с аккордами (chordsheetjs)</title>
+  <link rel="stylesheet" href="../../lib/styles.css">
+  <style>
+    body { font-family: Arial, sans-serif; padding: 20px; background: #fafafa; }
+    .container { max-width: 700px; margin: 0 auto; background: white; padding: 24px; border-radius: 10px; box-shadow: 0 2px 6px rgba(0,0,0,0.05); }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>Текст с аккордами (через chordsheetjs)</h2>
+    <div id="chords-container"></div>
+  </div>
+
+  <!-- Подключаем chordsheetjs из CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/chordsheetjs@6/dist/chordsheetjs.umd.min.js"></script>
+
+  <!-- Теперь подключаем наш компонент -->
+  <script src="../../lib/chords.js"></script>
+
+  <script>
+    // Пример в формате "встроенные аккорды" — как у тебя раньше
+    const sampleLyrics = `[C]Звёзды меркнут в вышине,\n[G]Сердце бьётся в тишине.\n\n[Am]Ты со мной — и мир светлей,\n[F]Даже в самый хмурый день.`;
+
+    document.getElementById('chords-container').innerHTML = 
+      TildaComponents.renderLyricsWithChords(sampleLyrics);
+  </script>
+</body>
+</html>
