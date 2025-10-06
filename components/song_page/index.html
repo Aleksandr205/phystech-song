@@ -107,7 +107,6 @@
       document.getElementById('app').innerHTML = `
         <div class="error-message">
           <p>❌ Не указан ID песни</p>
-          <a href="${BASE_URL}" class="back-button" target="_top">← Назад к списку</a>
         </div>`;
     } else {
       const sheetUrl = `https://docs.google.com/spreadsheets/d/${SPREADSHEET_ID}/gviz/tq?tqx=out:json&sheet=${encodeURIComponent(SHEET_NAME)}`;
@@ -148,7 +147,6 @@
             el.innerHTML = `
               <div class="error-message">
                 <p>❌ Песня с ID "${songId}" не найдена</p>
-                <a href="${BASE_URL}" class="back-button">← Назад к списку</a>
               </div>`;
             return;
           }
@@ -166,7 +164,6 @@
               <div class="lyrics-block">${lyricsHtml}</div>
               ${audioHtml}
             </div>
-            <a href="${BASE_URL}" class="back-button">← Назад к списку</a>
           `;
         })
         .catch(err => {
@@ -175,7 +172,6 @@
             <div class="error-message">
               <p>❌ Ошибка загрузки данных</p>
               <p>${err.message || 'Неизвестная ошибка'}</p>
-              <a href="${BASE_URL}" class="back-button">← Назад к списку</a>
             </div>`;
         });
     }
