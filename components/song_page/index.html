@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Песня</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../../lib/styles.css">
+  <style>
+    body {
+      font-family: 'Inter', sans-serif;
+      margin: 0;
+      padding: 0;
+      background: #fff;
+      color: var(--text);
+      line-height: 1.5;
+    }
+    .container {
+      max-width: 1000px;
+      margin: 0 auto;
+      padding: 24px 16px;
+    }
+    .song-detail {
+      background: white;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 24px;
+      margin-bottom: 20px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.04);
+    }
+    h2 {
+      margin: 0 0 8px;
+      color: var(--primary);
+      font-size: 1.5rem;
+    }
+    .song-meta {
+      color: var(--text-muted);
+      font-size: 0.95rem;
+      margin-bottom: 20px;
+    }
+    .back-button {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 8px 16px;
+      background: #fafafa;
+      border: 1px solid var(--border);
+      border-radius: 30px;
+      text-decoration: none;
+      color: var(--text);
+      font-weight: 500;
+      transition: all 0.25s ease;
+    }
+    .back-button:hover {
+      background: #f0f0f0;
+      border-color: var(--primary);
+    }
+    .loading,
+    .error-message {
+      text-align: center;
+      padding: 30px;
+      color: var(--text-muted);
+    }
+  </style>
+</head>
+<body>
+  <div class="container" id="app">
+    <div class="loading">Загрузка...</div>
+  </div>
+
+  <!-- Подключаем оба компонента -->
+  <script src="../../lib/chords.js"></script>
+  <script src="../../lib/player.js"></script>
+
+  <script>
+    // === Настройки (адаптируй под свой проект) ===
+    const SPREADSHEET_ID = '1ZWRUI1LhiewLkkue3Gzdej8ECwpeFAIjIhfXPHHr_7U';
+    const SHEET_NAME = 'Songs';
+    // Ссылка на страницу со списком песен (может быть внешней, например, на Tilda)
+    const BASE_URL = '../..'; // возвращает на корень phystech-song
+
+    // === Вспомогательная функция: парсинг даты ===
+    function parseDate(dateStr) {
+      if (!dateStr) return { raw: '', year: 0 };
+      if (dateStr.startsWith('Date(')) {
+        const m = dateStr.match(/Date\((\d+),\s*(\d+),\s*(\d+)\)/);
+        if (m) {
+          const y = +m[1], mth = +m[2] + 1, d = +m[3];
+          return {
+            raw: `${d.toString().padStart(2,'0')}.${mth.toString().padStart(2,'0')}.${y}`,
+            year: y
+          };
+        }
+      }
+      const parts = dateStr.split('.');
+      if (parts.length === 3 && parts[2].length === 4) {
+        return { raw: dateStr, year: +parts[2] };
+      }
+      return { raw: dateStr, year: 0 };
+    }
+
+    // === Основная логика ===
+    const params = new URLSearchParams(window.location.search);
+    const songId = params.get('id');
+
+    if (!songId) {
+      document.getElementById('app').innerHTML = `
+        <div class="error-message">
+          <p>❌ Не указан ID песни</p>
+          <a href="${BASE_URL}" class="back-button">← Назад к списку</a>
+        </div>`;
+    } else {
+      const sheetUrl = `https://docs.google.com/spreadsheets/d/${SPREADSHEET_ID}/gviz/tq?tqx=out:json&sheet=${encodeURIComponent(SHEET_NAME)}`;
+
+      function parseGoogleJsonp(text) {
+        const match = text.match(/google\.visualization\.Query\.setResponse\((.*)\)/);
+        if (!match) throw new Error('Invalid Google Sheets response');
+        return JSON.parse(match[1]);
+      }
+
+      fetch(sheetUrl)
+        .then(res => res.ok ? res.text() : Promise.reject('Network error'))
+        .then(parseGoogleJsonp)
+        .then(data => {
+          const rows = data.table.rows || [];
+          const cols = data.table.cols || [];
+          const headers = cols.map(c => c.label);
+
+          if (!headers.length || !rows.length) throw new Error('No data in sheet');
+
+          const allSongs = rows.map(row => {
+            const obj = {};
+            headers.forEach((h, i) => {
+              obj[h] = row.c?.[i]?.v ?? '';
+            });
+            const dateInfo = parseDate(obj.DATE);
+            return {
+              ...obj,
+              formattedDate: dateInfo.raw,
+              year: dateInfo.year
+            };
+          });
+
+          const song = allSongs.find(s => String(s.ID) === String(songId));
+          const el = document.getElementById('app');
+
+          if (!song) {
+            el.innerHTML = `
+              <div class="error-message">
+                <p>❌ Песня с ID "${songId}" не найдена</p>
+                <a href="${BASE_URL}" class="back-button">← Назад к списку</a>
+              </div>`;
+            return;
+          }
+
+          const title = (song.TITLE && String(song.TITLE).trim()) || 'Без названия';
+          const meta = song.formattedDate ? `<div class="song-meta">${song.formattedDate}</div>` : '';
+          const lyricsHtml = TildaComponents.renderLyricsWithChords(song.LYRICS);
+          const audioHtml = TildaComponents.renderAudio(song['AUDIO URL']);
+
+          el.className = 'container';
+          el.innerHTML = `
+            <div class="song-detail">
+              <h2>${title}</h2>
+              ${meta}
+              <div class="lyrics-block">${lyricsHtml}</div>
+              ${audioHtml}
+            </div>
+            <a href="${BASE_URL}" class="back-button">← Назад к списку</a>
+          `;
+        })
+        .catch(err => {
+          console.error('Song load error:', err);
+          document.getElementById('app').innerHTML = `
+            <div class="error-message">
+              <p>❌ Ошибка загрузки данных</p>
+              <p>${err.message || 'Неизвестная ошибка'}</p>
+              <a href="${BASE_URL}" class="back-button">← Назад к списку</a>
+            </div>`;
+        });
+    }
+  </script>
+</body>
+</html>

@@ -1,0 +1,71 @@
+/* lib/styles.css */
+:root {
+  --primary: #0b7070;
+  --text: #1a1a1a;
+  --text-muted: #757575;
+  --border: #eaeaea;
+}
+
+/* === Аккорды === */
+.lyrics-block {
+  white-space: pre-wrap;
+  line-height: 1.7;
+  font-size: 1rem;
+  margin-bottom: 24px;
+}
+
+.lyrics-line {
+  position: relative;
+  min-height: 1.2em;
+}
+
+.lyrics-line--with-chords {
+  margin-top: 1.2em;
+}
+
+.lyrics-line--empty {
+  margin-top: 0.8em;
+  min-height: 0.8em;
+}
+
+.lyric-word {
+  position: relative;
+  display: inline-block;
+  vertical-align: top;
+}
+
+.chord-above {
+  position: absolute;
+  top: -1.4em;
+  left: 0;
+  font-size: 0.85em;
+  font-weight: 600;
+  color: var(--primary);
+  pointer-events: none;
+  white-space: nowrap;
+}
+
+/* === Плеер === */
+.audio-player {
+  margin-top: 16px;
+}
+
+.audio-player iframe,
+.audio-player audio {
+  width: 100%;
+  border-radius: 6px;
+  border: none;
+}
+
+.action-link {
+  display: inline-block;
+  margin-top: 8px;
+  color: var(--primary);
+  text-decoration: none;
+  font-weight: 500;
+  font-size: 0.9rem;
+}
+
+.action-link:hover {
+  text-decoration: underline;
+}
