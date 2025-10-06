@@ -1,61 +1,144 @@
 <!DOCTYPE html>
 <html lang="ru">
-
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Аккорды</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
-    <link rel="stylesheet" href="../../lib/styles.css">
-    <style>
-        body {
-            font-family: 'Inter', sans-serif;
-            margin: 0;
-            padding: 0;
-            background: transparent;
-            color: var(--text, #1a1a1a);
-            line-height: 1.5;
-        }
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Аккорды</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    /* Полностью самодостаточные стили — без внешних зависимостей */
+    body {
+      font-family: 'Inter', sans-serif;
+      margin: 0;
+      padding: 0;
+      background: transparent;
+      color: #1a1a1a;
+      line-height: 1.5;
+      font-size: 1rem;
+    }
 
-        .lyrics-block {
-            white-space: pre-wrap;
-            font-family: 'Inter', sans-serif;
-            /* monospace не нужен — мешает читаемости */
-            font-size: 1rem;
-        }
+    #lyrics {
+      padding: 0;
+      margin: 0;
+    }
 
-        /* 🔑 Стиль для аккордов */
-        .chord {
-            color: var(--primary, #1a73e8);
-            font-weight: 600;
-            font-size: 0.85em;
-            vertical-align: super;
-            /* поднимает аккорд вверх, как у нот */
-            margin-right: 0.15em;
-            line-height: 1;
-        }
-    </style>
+    .lyrics-line {
+      margin: 0;
+      padding: 0;
+      display: block;
+    }
+
+    .lyrics-line--empty {
+      min-height: 1.5em;
+    }
+
+    .lyrics-line--with-chords {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: flex-end;
+      gap: 0.2em;
+      margin-bottom: 0.6em;
+    }
+
+    .lyric-word {
+      position: relative;
+      display: inline-block;
+      text-align: left;
+      white-space: pre;
+      line-height: 1.4;
+    }
+
+    .chord-above {
+      position: absolute;
+      top: -1.1em;
+      left: 0;
+      font-size: 0.82em;
+      font-weight: 600;
+      color: #1a73e8;
+      white-space: nowrap;
+      line-height: 1;
+    }
+
+    /* Строки без аккордов */
+    .lyrics-line:not(.lyrics-line--with-chords) {
+      white-space: pre-wrap;
+      margin-bottom: 0.6em;
+    }
+  </style>
 </head>
-
 <body>
-    <div class="lyrics-block" id="lyrics"></div>
+  <div id="lyrics"></div>
 
-    <script>
-        function renderLyricsWithChords(text) {
-            if (!text) return '';
-            return text
-                .split('\n')
-                .map(line => {
-                    // Пример: [C]Это [G]песня → <span class="chord">C</span>Это <span class="chord">G</span>песня
-                    return line.replace(/\[([^\]]+)\]/g, '<span class="chord">$1</span>');
-                })
-                .join('<br>');
+  <script>
+    function renderLyricsWithChords(lyrics) {
+      if (!lyrics) return '';
+
+      return lyrics.split('\n').map(line => {
+        const isEmpty = line.trim() === '';
+        if (isEmpty) {
+          return '<div class="lyrics-line lyrics-line--empty">&nbsp;</div>';
         }
 
-        const params = new URLSearchParams(window.location.search);
-        const rawText = decodeURIComponent(params.get('text') || '');
-        document.getElementById('lyrics').innerHTML = renderLyricsWithChords(rawText);
-    </script>
-</body>
+        const hasChords = /\[([^\]]+)\]/.test(line);
+        const lineClasses = ['lyrics-line'];
+        if (hasChords) lineClasses.push('lyrics-line--with-chords');
 
+        if (!hasChords) {
+          // Экранируем HTML-символы в чистом тексте
+          const safeLine = line
+            .replace(/&/g, '&amp;')
+            .replace(/</g, '<')
+            .replace(/>/g, '>');
+          return `<div class="${lineClasses.join(' ')}">${safeLine}</div>`;
+        }
+
+        const tokens = [];
+        let lastIndex = 0;
+        let match;
+        const chordRegex = /\[([^\]]+)\]/g;
+
+        while ((match = chordRegex.exec(line)) !== null) {
+          if (match.index > lastIndex) {
+            tokens.push({ type: 'text', value: line.slice(lastIndex, match.index) });
+          }
+          tokens.push({ type: 'chord', value: match[1] });
+          lastIndex = match.index + match[0].length;
+        }
+        if (lastIndex < line.length) {
+          tokens.push({ type: 'text', value: line.slice(lastIndex) });
+        }
+
+        let html = `<div class="${lineClasses.join(' ')}">`;
+        for (let i = 0; i < tokens.length; i++) {
+          if (tokens[i].type === 'chord') {
+            const chord = tokens[i].value;
+            let text = '';
+            if (i + 1 < tokens.length && tokens[i + 1].type === 'text') {
+              text = tokens[i + 1].value;
+              i++;
+            }
+            // Экранируем текст, но не аккорд (он безопасен)
+            const safeText = text
+              .replace(/&/g, '&amp;')
+              .replace(/</g, '<')
+              .replace(/>/g, '>');
+            html += `<span class="lyric-word"><span class="chord-above">${chord}</span>${safeText}</span>`;
+          } else {
+            const safeValue = tokens[i].value
+              .replace(/&/g, '&amp;')
+              .replace(/</g, '<')
+              .replace(/>/g, '>');
+            html += `<span class="lyric-word">${safeValue}</span>`;
+          }
+        }
+        html += '</div>';
+        return html;
+      }).join('');
+    }
+
+    const params = new URLSearchParams(window.location.search);
+    const rawText = decodeURIComponent(params.get('text') || '');
+    document.getElementById('lyrics').innerHTML = renderLyricsWithChords(rawText);
+  </script>
+</body>
 </html>
