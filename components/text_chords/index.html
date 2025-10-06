@@ -6,68 +6,91 @@
   <title>Аккорды</title>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
   <style>
-    /* Полностью самодостаточные стили — без внешних зависимостей */
+    :root {
+      --primary: #0b7070;
+      --text: #1a1a1a;
+    }
+
     body {
       font-family: 'Inter', sans-serif;
       margin: 0;
       padding: 0;
       background: transparent;
-      color: #1a1a1a;
+      color: var(--text);
       line-height: 1.5;
-      font-size: 1rem;
     }
 
-    #lyrics {
-      padding: 0;
-      margin: 0;
+    /* === ТОЧНО КАК В ОРИГИНАЛЬНОМ styles.css === */
+    .lyrics-block {
+      font-size: 1rem;
+      line-height: 1.7;
+      margin-bottom: 24px;
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: thin;
+      padding-top: 1.4em; /* место для аккордов первой строки */
+      margin-top: 0;
     }
 
     .lyrics-line {
-      margin: 0;
-      padding: 0;
-      display: block;
+      position: relative;
+      margin-top: 0.6em;
+      color: var(--text);
     }
 
-    .lyrics-line--empty {
-      min-height: 1.5em;
+    .lyrics-line:first-child {
+      margin-top: 0;
     }
 
     .lyrics-line--with-chords {
-      display: flex;
-      flex-wrap: wrap;
-      align-items: flex-end;
-      gap: 0.2em;
-      margin-bottom: 0.6em;
+      white-space: nowrap;
+      margin-top: 1.4em;
+    }
+
+    .lyrics-block > .lyrics-line--with-chords:first-child {
+      margin-top: 0;
+    }
+
+    .lyrics-line--empty {
+      margin-top: 0.8em;
+      min-height: 0.8em;
     }
 
     .lyric-word {
       position: relative;
       display: inline-block;
-      text-align: left;
-      white-space: pre;
-      line-height: 1.4;
+      vertical-align: top;
+      white-space: nowrap;
     }
 
     .chord-above {
       position: absolute;
-      top: -1.1em;
+      top: -1.4em;
       left: 0;
-      font-size: 0.82em;
+      font-size: 0.85em;
       font-weight: 600;
-      color: #1a73e8;
+      color: var(--primary);
+      pointer-events: none;
       white-space: nowrap;
-      line-height: 1;
     }
 
-    /* Строки без аккордов */
+    /* 🔑 Критически важно для строк без аккордов */
     .lyrics-line:not(.lyrics-line--with-chords) {
       white-space: pre-wrap;
-      margin-bottom: 0.6em;
+    }
+
+    @media (max-width: 600px) {
+      .lyrics-block {
+        font-size: 0.9rem;
+      }
+      .chord-above {
+        font-size: 0.8rem;
+      }
     }
   </style>
 </head>
 <body>
-  <div id="lyrics"></div>
+  <div class="lyrics-block" id="lyrics"></div>
 
   <script>
     function renderLyricsWithChords(lyrics) {
@@ -84,7 +107,7 @@
         if (hasChords) lineClasses.push('lyrics-line--with-chords');
 
         if (!hasChords) {
-          // Экранируем HTML-символы в чистом тексте
+          // Экранируем HTML
           const safeLine = line
             .replace(/&/g, '&amp;')
             .replace(/</g, '<')
@@ -117,7 +140,6 @@
               text = tokens[i + 1].value;
               i++;
             }
-            // Экранируем текст, но не аккорд (он безопасен)
             const safeText = text
               .replace(/&/g, '&amp;')
               .replace(/</g, '<')
