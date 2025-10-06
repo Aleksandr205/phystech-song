@@ -3,31 +3,43 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Текст с аккордами (chordsheetjs)</title>
+  <title>Аккорды</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="../../lib/styles.css">
   <style>
-    body { font-family: Arial, sans-serif; padding: 20px; background: #fafafa; }
-    .container { max-width: 700px; margin: 0 auto; background: white; padding: 24px; border-radius: 10px; box-shadow: 0 2px 6px rgba(0,0,0,0.05); }
+    body {
+      font-family: 'Inter', sans-serif;
+      margin: 0;
+      padding: 0;
+      background: transparent;
+      color: var(--text);
+      line-height: 1.5;
+    }
+    .lyrics-block {
+      white-space: pre-wrap;
+      font-family: monospace;
+      font-size: 1rem;
+    }
   </style>
 </head>
 <body>
-  <div class="container">
-    <h2>Текст с аккордами (через chordsheetjs)</h2>
-    <div id="chords-container"></div>
-  </div>
-
-  <!-- Подключаем chordsheetjs из CDN -->
-  <script src="https://cdn.jsdelivr.net/npm/chordsheetjs@6/dist/chordsheetjs.umd.min.js"></script>
-
-  <!-- Теперь подключаем наш компонент -->
-  <script src="../../lib/chords.js"></script>
+  <div class="lyrics-block" id="lyrics"></div>
 
   <script>
-    // Пример в формате "встроенные аккорды" — как у тебя раньше
-    const sampleLyrics = `[C]Звёзды меркнут в вышине,\n[G]Сердце бьётся в тишине.\n\n[Am]Ты со мной — и мир светлей,\n[F]Даже в самый хмурый день.`;
+    function renderLyricsWithChords(text) {
+      if (!text) return '';
+      return text
+        .split('\n')
+        .map(line => {
+          // Пример: [C]Это [G]песня → <span class="chord">C</span>Это <span class="chord">G</span>песня
+          return line.replace(/\[([^\]]+)\]/g, '<span class="chord">$1</span>');
+        })
+        .join('<br>');
+    }
 
-    document.getElementById('chords-container').innerHTML = 
-      TildaComponents.renderLyricsWithChords(sampleLyrics);
+    const params = new URLSearchParams(window.location.search);
+    const rawText = decodeURIComponent(params.get('text') || '');
+    document.getElementById('lyrics').innerHTML = renderLyricsWithChords(rawText);
   </script>
 </body>
 </html>

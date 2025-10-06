@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Плеер</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      background: transparent;
+    }
+    audio {
+      width: 100%;
+      margin-top: 12px;
+    }
+  </style>
+</head>
+<body>
+  <div id="player"></div>
+
+  <script>
+    const params = new URLSearchParams(window.location.search);
+    const audioUrl = decodeURIComponent(params.get('url') || '').trim();
+
+    if (audioUrl) {
+      const audio = document.createElement('audio');
+      audio.controls = true;
+      audio.src = audioUrl;
+      audio.preload = 'metadata';
+      document.getElementById('player').appendChild(audio);
+    }
+  </script>
+</body>
+</html>
