@@ -1,45 +1,61 @@
 <!DOCTYPE html>
 <html lang="ru">
+
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Аккорды</title>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="../../lib/styles.css">
-  <style>
-    body {
-      font-family: 'Inter', sans-serif;
-      margin: 0;
-      padding: 0;
-      background: transparent;
-      color: var(--text);
-      line-height: 1.5;
-    }
-    .lyrics-block {
-      white-space: pre-wrap;
-      font-family: monospace;
-      font-size: 1rem;
-    }
-  </style>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Аккорды</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="../../lib/styles.css">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            margin: 0;
+            padding: 0;
+            background: transparent;
+            color: var(--text, #1a1a1a);
+            line-height: 1.5;
+        }
+
+        .lyrics-block {
+            white-space: pre-wrap;
+            font-family: 'Inter', sans-serif;
+            /* monospace не нужен — мешает читаемости */
+            font-size: 1rem;
+        }
+
+        /* 🔑 Стиль для аккордов */
+        .chord {
+            color: var(--primary, #1a73e8);
+            font-weight: 600;
+            font-size: 0.85em;
+            vertical-align: super;
+            /* поднимает аккорд вверх, как у нот */
+            margin-right: 0.15em;
+            line-height: 1;
+        }
+    </style>
 </head>
+
 <body>
-  <div class="lyrics-block" id="lyrics"></div>
+    <div class="lyrics-block" id="lyrics"></div>
 
-  <script>
-    function renderLyricsWithChords(text) {
-      if (!text) return '';
-      return text
-        .split('\n')
-        .map(line => {
-          // Пример: [C]Это [G]песня → <span class="chord">C</span>Это <span class="chord">G</span>песня
-          return line.replace(/\[([^\]]+)\]/g, '<span class="chord">$1</span>');
-        })
-        .join('<br>');
-    }
+    <script>
+        function renderLyricsWithChords(text) {
+            if (!text) return '';
+            return text
+                .split('\n')
+                .map(line => {
+                    // Пример: [C]Это [G]песня → <span class="chord">C</span>Это <span class="chord">G</span>песня
+                    return line.replace(/\[([^\]]+)\]/g, '<span class="chord">$1</span>');
+                })
+                .join('<br>');
+        }
 
-    const params = new URLSearchParams(window.location.search);
-    const rawText = decodeURIComponent(params.get('text') || '');
-    document.getElementById('lyrics').innerHTML = renderLyricsWithChords(rawText);
-  </script>
+        const params = new URLSearchParams(window.location.search);
+        const rawText = decodeURIComponent(params.get('text') || '');
+        document.getElementById('lyrics').innerHTML = renderLyricsWithChords(rawText);
+    </script>
 </body>
+
 </html>
