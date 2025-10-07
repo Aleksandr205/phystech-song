@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Концерты</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --primary: #0b7070;
+      --bg: #ffffff;
+      --text: #1a1a1a;
+      --text-muted: #757575;
+      --border: #eaeaea;
+      --radius: 10px;
+      --shadow: 0 2px 6px rgba(0,0,0,0.04);
+      --shadow-hover: 0 6px 16px rgba(0,0,0,0.08);
+      --transition: all 0.25s ease;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      margin: 0;
+      padding: 0;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.5;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 24px 16px;
+    }
+
+    .concerts-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+      gap: 24px;
+    }
+
+    .concert-card {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      text-decoration: none;
+      color: inherit;
+      background: white;
+      border-radius: var(--radius);
+      padding: 16px;
+      aspect-ratio: 3 / 2;
+      box-shadow: var(--shadow);
+      transition: var(--transition);
+    }
+
+    .concert-card:hover {
+      box-shadow: var(--shadow-hover);
+      transform: translateY(-4px);
+    }
+
+    .concert-title {
+      font-weight: 600;
+      font-size: 1.1rem;
+      margin: 0 0 8px;
+      color: var(--primary);
+      overflow: hidden;
+      text-overflow: ellipsis;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      line-height: 1.3;
+    }
+
+    .concert-date {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      opacity: 0.9;
+      white-space: nowrap;
+    }
+
+    .loading,
+    .error-message {
+      text-align: center;
+      padding: 40px 20px;
+      color: var(--text-muted);
+      font-size: 1.1rem;
+    }
+
+    @media (max-width: 600px) {
+      .concerts-grid {
+        grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+        gap: 16px;
+      }
+
+      .concert-card {
+        padding: 12px;
+      }
+
+      .concert-title {
+        font-size: 1rem;
+      }
+
+      .concert-date {
+        font-size: 0.8rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container" id="app">
+    <div id="content" class="loading">Загрузка...</div>
+  </div>
+
+  <script>
+    const SPREADSHEET_ID = '1ZWRUI1LhiewLkkue3Gzdej8ECwpeFAIjIhfXPHHr_7U';
+    const SHEET_NAME = 'Concerts';
+    const BASE_URL = 'concert';
+
+    // Вспомогательная функция: парсит дату и возвращает объект Date или null
+    function parseDateToObj(dateStr) {
+      if (!dateStr) return null;
+      if (dateStr.startsWith('Date(')) {
+        const m = dateStr.match(/Date\((\d+),\s*(\d+),\s*(\d+)\)/);
+        if (m) {
+          const y = +m[1], mth = +m[2], d = +m[3]; // месяц в Date() — 0-11
+          return new Date(y, mth, d);
+        }
+      }
+      const parts = dateStr.split('.');
+      if (parts.length === 3 && parts[2].length === 4) {
+        const day = parseInt(parts[0], 10);
+        const month = parseInt(parts[1], 10) - 1; // JS: январь = 0
+        const year = parseInt(parts[2], 10);
+        if (!isNaN(day) && !isNaN(month) && !isNaN(year)) {
+          return new Date(year, month, day);
+        }
+      }
+      return null;
+    }
+
+    // Форматирование даты для отображения (оставляем как DD.MM.YYYY)
+    function formatDisplayDate(dateStr) {
+      if (!dateStr) return '';
+      if (dateStr.startsWith('Date(')) {
+        const m = dateStr.match(/Date\((\d+),\s*(\d+),\s*(\d+)\)/);
+        if (m) {
+          const y = +m[1], mth = +m[2] + 1, d = +m[3];
+          return `${d.toString().padStart(2,'0')}.${mth.toString().padStart(2,'0')}.${y}`;
+        }
+      }
+      const parts = dateStr.split('.');
+      if (parts.length === 3 && parts[2].length === 4) {
+        return dateStr;
+      }
+      return dateStr;
+    }
+
+    const sheetUrl = `https://docs.google.com/spreadsheets/d/${SPREADSHEET_ID}/gviz/tq?tqx=out:json&headers=1&sheet=${encodeURIComponent(SHEET_NAME)}`;
+
+    function parseGoogleJsonp(text) {
+      const match = text.match(/google\.visualization\.Query\.setResponse\((.*)\)/);
+      if (!match) throw new Error('Invalid Google Sheets response');
+      return JSON.parse(match[1]);
+    }
+
+    fetch(sheetUrl)
+      .then(res => {
+        if (!res.ok) throw new Error('Network error');
+        return res.text();
+      })
+      .then(parseGoogleJsonp)
+      .then(data => {
+        const cols = data.table.cols || [];
+        const rows = data.table.rows || [];
+
+        if (rows.length === 0) {
+          throw new Error('No concerts found');
+        }
+
+        // Находим индексы колонок по label
+        const colIndex = {};
+        cols.forEach((col, i) => {
+          const label = col.label;
+          if (label === 'ID' || label === 'TITLE' || label === 'DATE') {
+            colIndex[label] = i;
+          }
+        });
+
+        if (colIndex.ID === undefined || colIndex.TITLE === undefined) {
+          throw new Error('Таблица должна содержать колонки: ID, TITLE');
+        }
+
+        const concerts = rows.map(row => {
+          const cells = row.c || [];
+          const getCellValue = (key) => {
+            const idx = colIndex[key];
+            return idx !== undefined && cells[idx] ? cells[idx].v : '';
+          };
+
+          const id = getCellValue('ID');
+          const title = getCellValue('TITLE');
+          const dateRaw = getCellValue('DATE');
+
+          const dateObj = parseDateToObj(dateRaw);
+          const displayDate = dateRaw ? formatDisplayDate(dateRaw) : '';
+
+          return {
+            ID: id,
+            TITLE: title,
+            formattedDate: displayDate,
+            dateObj: dateObj // для сортировки
+          };
+        });
+
+        // Сортировка:
+        // 1. Сначала — с датой (dateObj !== null)
+        // 2. Среди них — от новых к старым (по убыванию timestamp)
+        // 3. Потом — без даты
+        concerts.sort((a, b) => {
+          const aHasDate = a.dateObj !== null;
+          const bHasDate = b.dateObj !== null;
+
+          if (aHasDate && bHasDate) {
+            // Сравниваем по дате: новые — первее → b - a
+            return b.dateObj - a.dateObj;
+          }
+
+          if (aHasDate && !bHasDate) return -1; // a раньше
+          if (!aHasDate && bHasDate) return 1;  // b раньше
+          return 0; // оба без даты — порядок не важен
+        });
+
+        renderConcerts(concerts);
+      })
+      .catch(err => {
+        document.getElementById('content').innerHTML = `
+          <div class="error-message">
+            <p>❌ Не удалось загрузить концерты</p>
+            <p>${err.message}</p>
+          </div>`;
+      });
+
+    function renderConcerts(concerts) {
+      if (concerts.length === 0) {
+        document.getElementById('content').innerHTML = '<div class="error-message"><p>Нет запланированных концертов</p></div>';
+        return;
+      }
+
+      const cards = concerts.map(concert => {
+        const title = (concert.TITLE && String(concert.TITLE).trim()) || 'Без названия';
+        const dateHtml = concert.formattedDate
+          ? `<div class="concert-date">${concert.formattedDate}</div>`
+          : '';
+
+        return `
+          <a href="${BASE_URL}?id=${encodeURIComponent(concert.ID)}" class="concert-card">
+            <div class="concert-title">${title}</div>
+            ${dateHtml}
+          </a>`;
+      }).join('');
+
+      document.getElementById('content').innerHTML = `<div class="concerts-grid">${cards}</div>`;
+    }
+  </script>
+</body>
+</html>

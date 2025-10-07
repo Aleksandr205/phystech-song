@@ -38,23 +38,6 @@
       font-size: 0.95rem;
       margin-bottom: 20px;
     }
-    .back-button {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      padding: 8px 16px;
-      background: #fafafa;
-      border: 1px solid var(--border);
-      border-radius: 30px;
-      text-decoration: none;
-      color: var(--text);
-      font-weight: 500;
-      transition: all 0.25s ease;
-    }
-    .back-button:hover {
-      background: #f0f0f0;
-      border-color: var(--primary);
-    }
     .loading,
     .error-message {
       text-align: center;
@@ -68,38 +51,14 @@
     <div class="loading">Загрузка...</div>
   </div>
 
-  <!-- Подключаем оба компонента -->
+  <!-- Подключаем компоненты -->
   <script src="../../lib/chords.js"></script>
   <script src="../../lib/player.js"></script>
 
-  <script>
-    // === Настройки (адаптируй под свой проект) ===
-    const SPREADSHEET_ID = '1ZWRUI1LhiewLkkue3Gzdej8ECwpeFAIjIhfXPHHr_7U';
-    const SHEET_NAME = 'Songs';
-    // Ссылка на страницу со списком песен (может быть внешней, например, на Tilda)
-    const BASE_URL = 'https://phystech-song.ru/songs'; // возвращает на корень phystech-song
+  <!-- Основная логика с модульным импортом -->
+  <script type="module">
+    import { fetchSongs } from '../../lib/fetch-songs.js';
 
-    // === Вспомогательная функция: парсинг даты ===
-    function parseDate(dateStr) {
-      if (!dateStr) return { raw: '', year: 0 };
-      if (dateStr.startsWith('Date(')) {
-        const m = dateStr.match(/Date\((\d+),\s*(\d+),\s*(\d+)\)/);
-        if (m) {
-          const y = +m[1], mth = +m[2] + 1, d = +m[3];
-          return {
-            raw: `${d.toString().padStart(2,'0')}.${mth.toString().padStart(2,'0')}.${y}`,
-            year: y
-          };
-        }
-      }
-      const parts = dateStr.split('.');
-      if (parts.length === 3 && parts[2].length === 4) {
-        return { raw: dateStr, year: +parts[2] };
-      }
-      return { raw: dateStr, year: 0 };
-    }
-
-    // === Основная логика ===
     const params = new URLSearchParams(window.location.search);
     const songId = params.get('id');
 
@@ -109,38 +68,9 @@
           <p>❌ Не указан ID песни</p>
         </div>`;
     } else {
-      const sheetUrl = `https://docs.google.com/spreadsheets/d/${SPREADSHEET_ID}/gviz/tq?tqx=out:json&sheet=${encodeURIComponent(SHEET_NAME)}&headers=1`;
-
-      function parseGoogleJsonp(text) {
-        const match = text.match(/google\.visualization\.Query\.setResponse\((.*)\)/);
-        if (!match) throw new Error('Invalid Google Sheets response');
-        return JSON.parse(match[1]);
-      }
-
-      fetch(sheetUrl)
-        .then(res => res.ok ? res.text() : Promise.reject('Network error'))
-        .then(parseGoogleJsonp)
-        .then(data => {
-          const rows = data.table.rows || [];
-          const cols = data.table.cols || [];
-          const headers = cols.map(c => c.label);
-
-          if (!headers.length || !rows.length) throw new Error('No data in sheet');
-
-          const allSongs = rows.map(row => {
-            const obj = {};
-            headers.forEach((h, i) => {
-              obj[h] = row.c?.[i]?.v ?? '';
-            });
-            const dateInfo = parseDate(obj.DATE);
-            return {
-              ...obj,
-              formattedDate: dateInfo.raw,
-              year: dateInfo.year
-            };
-          });
-
-          const song = allSongs.find(s => String(s.ID) === String(songId));
+      fetchSongs()
+        .then(songs => {
+          const song = songs.find(s => String(s.ID) === String(songId));
           const el = document.getElementById('app');
 
           if (!song) {
