@@ -102,7 +102,7 @@
           const member = membersMap.get(id);
           if (member) {
             const name = member.NAME || id;
-            const link = `<a href="/members?id=${encodeURIComponent(id)}">${name}</a>`;
+            const link = `<a href="https://phystech-song.ru/member?id=${encodeURIComponent(id)}" target="_blank">${name}</a>`;
             return instrument ? `${link} — ${instrument}` : link;
           } else {
             return `${id}${instrument ? ` — ${instrument}` : ''}`;
@@ -131,7 +131,7 @@
           const song = songsMap.get(id);
           if (song) {
             const title = song.TITLE || id;
-            return `<a href="/song?id=${encodeURIComponent(id)}">${title}</a>`;
+            return `<a href="https://phystech-song.ru/song?id=${encodeURIComponent(id)}" target="_blank">${title}</a>`;
           } else {
             return id;
           }
