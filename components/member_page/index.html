@@ -93,10 +93,38 @@
     <div class="loading">Загрузка...</div>
   </div>
 
+  <!-- Подключаем компоненты (если нужны) -->
   <script src="../../lib/chords.js"></script>
   <script src="../../lib/player.js"></script>
 
   <script type="module">
+    // === 1. Настройка навигации через postMessage ===
+    function handleNavigation(path) {
+      if (window.parent && window.parent !== window) {
+        // Отправляем в родительское окно (Tilda)
+        window.parent.postMessage({ type: 'NAVIGATE', path: path }, '*');
+      } else {
+        // Если не во фрейме — обычный переход
+        window.location.href = path;
+      }
+    }
+
+    // Перехватываем все клики по внутренним ссылкам
+    document.addEventListener('click', function(e) {
+      const link = e.target.closest('a[href^="/"]');
+      if (link) {
+        e.preventDefault();
+        try {
+          const url = new URL(link.href, window.location.origin);
+          const path = url.pathname + url.search;
+          handleNavigation(path);
+        } catch (err) {
+          console.warn('Invalid link:', link.href);
+        }
+      }
+    });
+
+    // === 2. Загрузка данных ===
     import { fetchMembers, fetchConcerts } from '../../lib/fetch-songs.js';
 
     const params = new URLSearchParams(window.location.search);
@@ -112,33 +140,13 @@
 
     function isMemberInConcert(concert, targetId) {
       if (!concert.MEMBERS) return false;
-      const parts = concert.MEMBERS.split('|').map(p => p.trim());
-      for (const part of parts) {
+      return concert.MEMBERS.split('|').some(part => {
+        part = part.trim();
         if (part.startsWith('@')) {
           const id = part.substring(1).split(' - ')[0].trim();
-          if (String(id) === String(targetId)) return true;
+          return String(id) === String(targetId);
         }
-      }
-      return false;
-    }
-
-    // === Обработка кликов по ссылкам ===
-    function setupLinkHandlers() {
-      document.addEventListener('click', function(e) {
-        const link = e.target.closest('a[href^="/"]');
-        if (link) {
-          e.preventDefault();
-          const url = new URL(link.href);
-          const path = url.pathname + url.search;
-
-          // Отправляем команду родителю (Tilda)
-          if (window.parent && window.parent !== window) {
-            window.parent.postMessage({ type: 'NAVIGATE', path: path }, 'https://phystech-song.ru');
-          } else {
-            // Если не во фрейме — работаем как обычный сайт
-            window.location.href = link.href;
-          }
-        }
+        return false;
       });
     }
 
@@ -175,7 +183,7 @@
         let concertsHtml = '';
         if (memberConcerts.length > 0) {
           const concertItems = memberConcerts.map(c => {
-            const title = c.TITLE || `Концерт от ${c.formattedDate || c.DATE || '???'}`;
+            const title = c.TITLE || `Концерт от ${c.formattedDate || '???'}`;
             return `<li><a href="/concert?id=${encodeURIComponent(c.ID)}">${title}</a></li>`;
           }).join('');
           concertsHtml = `
@@ -186,7 +194,6 @@
 
         const meta = joinDate ? `<div class="member-meta">В группе с: ${joinDate}</div>` : '';
 
-        el.className = 'container';
         el.innerHTML = `
           <div class="member-detail">
             <div class="member-info">
@@ -198,9 +205,6 @@
             ${photoHtml}
           </div>
         `;
-
-        // Включаем обработку ссылок ПОСЛЕ рендеринга
-        setupLinkHandlers();
       })
       .catch(err => {
         console.error('Member load error:', err);
