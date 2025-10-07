@@ -109,7 +109,7 @@
           <p>❌ Не указан ID песни</p>
         </div>`;
     } else {
-      const sheetUrl = `https://docs.google.com/spreadsheets/d/${SPREADSHEET_ID}/gviz/tq?tqx=out:json&sheet=${encodeURIComponent(SHEET_NAME)}`;
+      const sheetUrl = `https://docs.google.com/spreadsheets/d/${SPREADSHEET_ID}/gviz/tq?tqx=out:json&sheet=${encodeURIComponent(SHEET_NAME)}?headers=1`;
 
       function parseGoogleJsonp(text) {
         const match = text.match(/google\.visualization\.Query\.setResponse\((.*)\)/);
