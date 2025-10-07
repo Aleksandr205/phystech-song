@@ -79,6 +79,13 @@
       padding: 30px;
       color: var(--text-muted);
     }
+    a {
+      color: var(--primary);
+      text-decoration: none;
+    }
+    a:hover {
+      text-decoration: underline;
+    }
   </style>
 </head>
 <body>
@@ -86,7 +93,6 @@
     <div class="loading">Загрузка...</div>
   </div>
 
-  <!-- Подключаем компоненты -->
   <script src="../../lib/chords.js"></script>
   <script src="../../lib/player.js"></script>
 
@@ -104,7 +110,6 @@
       throw new Error('No member ID');
     }
 
-    // Проверка, участвовал ли участник в концерте
     function isMemberInConcert(concert, targetId) {
       if (!concert.MEMBERS) return false;
       const parts = concert.MEMBERS.split('|').map(p => p.trim());
@@ -113,9 +118,28 @@
           const id = part.substring(1).split(' - ')[0].trim();
           if (String(id) === String(targetId)) return true;
         }
-        // Обычные имена не проверяем — только @id надёжны
       }
       return false;
+    }
+
+    // === Обработка кликов по ссылкам ===
+    function setupLinkHandlers() {
+      document.addEventListener('click', function(e) {
+        const link = e.target.closest('a[href^="/"]');
+        if (link) {
+          e.preventDefault();
+          const url = new URL(link.href);
+          const path = url.pathname + url.search;
+
+          // Отправляем команду родителю (Tilda)
+          if (window.parent && window.parent !== window) {
+            window.parent.postMessage({ type: 'NAVIGATE', path: path }, 'https://phystech-song.ru');
+          } else {
+            // Если не во фрейме — работаем как обычный сайт
+            window.location.href = link.href;
+          }
+        }
+      });
     }
 
     Promise.all([fetchMembers(), fetchConcerts()])
@@ -136,7 +160,6 @@
         const photoUrl = member.PHOTO_URL && String(member.PHOTO_URL).trim();
         const instruments = member.INSTRUMENTS && String(member.INSTRUMENTS).trim();
 
-        // Находим концерты с этим участником
         const memberConcerts = concerts.filter(c => isMemberInConcert(c, memberId));
 
         let photoHtml = '';
@@ -175,6 +198,9 @@
             ${photoHtml}
           </div>
         `;
+
+        // Включаем обработку ссылок ПОСЛЕ рендеринга
+        setupLinkHandlers();
       })
       .catch(err => {
         console.error('Member load error:', err);
