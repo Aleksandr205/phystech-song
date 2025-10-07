@@ -184,7 +184,7 @@
         if (memberConcerts.length > 0) {
           const concertItems = memberConcerts.map(c => {
             const title = c.TITLE || `Концерт от ${c.formattedDate || '???'}`;
-            return `<li><a href="/concert?id=${encodeURIComponent(c.ID)}">${title}</a></li>`;
+            return `<li><a href="https://phystech-song.ru/concert?id=${encodeURIComponent(c.ID)}" target="_blank">${title}</a></li>`;
           }).join('');
           concertsHtml = `
             <h3 class="section-title">Концерты</h3>
