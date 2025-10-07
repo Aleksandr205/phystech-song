@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Участник</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../../lib/styles.css">
+  <style>
+    body {
+      font-family: 'Inter', sans-serif;
+      margin: 0;
+      padding: 0;
+      background: #fff;
+      color: var(--text);
+      line-height: 1.5;
+    }
+    .container {
+      max-width: 1000px;
+      margin: 0 auto;
+      padding: 24px 16px;
+    }
+    .member-detail {
+      background: white;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 24px;
+      margin-bottom: 20px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.04);
+      display: flex;
+      flex-wrap: wrap;
+      gap: 24px;
+    }
+    .member-info {
+      flex: 1;
+      min-width: 300px;
+    }
+    .member-photo {
+      flex: 0 0 200px;
+      text-align: center;
+    }
+    .member-photo img {
+      width: 100%;
+      max-width: 200px;
+      height: auto;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+    }
+    h2 {
+      margin: 0 0 12px;
+      color: var(--primary);
+      font-size: 1.8rem;
+    }
+    .member-meta {
+      color: var(--text-muted);
+      font-size: 0.95rem;
+      margin-bottom: 20px;
+    }
+    .section-title {
+      margin: 24px 0 12px;
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: var(--text);
+    }
+    .instruments-text {
+      margin-bottom: 20px;
+      white-space: pre-wrap;
+    }
+    .concerts-list {
+      margin: 0;
+      padding-left: 20px;
+    }
+    .concerts-list li {
+      margin-bottom: 8px;
+    }
+    .loading,
+    .error-message {
+      text-align: center;
+      padding: 30px;
+      color: var(--text-muted);
+    }
+  </style>
+</head>
+<body>
+  <div class="container" id="app">
+    <div class="loading">Загрузка...</div>
+  </div>
+
+  <!-- Подключаем компоненты -->
+  <script src="../../lib/chords.js"></script>
+  <script src="../../lib/player.js"></script>
+
+  <script type="module">
+    import { fetchMembers, fetchConcerts } from '../../lib/fetch-songs.js';
+
+    const params = new URLSearchParams(window.location.search);
+    const memberId = params.get('id');
+
+    if (!memberId) {
+      document.getElementById('app').innerHTML = `
+        <div class="error-message">
+          <p>❌ Не указан ID участника</p>
+        </div>`;
+      throw new Error('No member ID');
+    }
+
+    // Проверка, участвовал ли участник в концерте
+    function isMemberInConcert(concert, targetId) {
+      if (!concert.MEMBERS) return false;
+      const parts = concert.MEMBERS.split('|').map(p => p.trim());
+      for (const part of parts) {
+        if (part.startsWith('@')) {
+          const id = part.substring(1).split(' - ')[0].trim();
+          if (String(id) === String(targetId)) return true;
+        }
+        // Обычные имена не проверяем — только @id надёжны
+      }
+      return false;
+    }
+
+    Promise.all([fetchMembers(), fetchConcerts()])
+      .then(([members, concerts]) => {
+        const member = members.find(m => String(m.ID) === String(memberId));
+        const el = document.getElementById('app');
+
+        if (!member) {
+          el.innerHTML = `
+            <div class="error-message">
+              <p>❌ Участник с ID "${memberId}" не найден</p>
+            </div>`;
+          return;
+        }
+
+        const name = (member.NAME && String(member.NAME).trim()) || 'Без имени';
+        const joinDate = member.formattedDate || '';
+        const photoUrl = member.PHOTO_URL && String(member.PHOTO_URL).trim();
+        const instruments = member.INSTRUMENTS && String(member.INSTRUMENTS).trim();
+
+        // Находим концерты с этим участником
+        const memberConcerts = concerts.filter(c => isMemberInConcert(c, memberId));
+
+        let photoHtml = '';
+        if (photoUrl) {
+          photoHtml = `<div class="member-photo"><img src="${photoUrl}" alt="${name}"></div>`;
+        }
+
+        let instrumentsHtml = '';
+        if (instruments) {
+          instrumentsHtml = `<div class="instruments-text">${instruments}</div>`;
+        }
+
+        let concertsHtml = '';
+        if (memberConcerts.length > 0) {
+          const concertItems = memberConcerts.map(c => {
+            const title = c.TITLE || `Концерт от ${c.formattedDate || c.DATE || '???'}`;
+            return `<li><a href="/concert?id=${encodeURIComponent(c.ID)}">${title}</a></li>`;
+          }).join('');
+          concertsHtml = `
+            <h3 class="section-title">Концерты</h3>
+            <ul class="concerts-list">${concertItems}</ul>
+          `;
+        }
+
+        const meta = joinDate ? `<div class="member-meta">В группе с: ${joinDate}</div>` : '';
+
+        el.className = 'container';
+        el.innerHTML = `
+          <div class="member-detail">
+            <div class="member-info">
+              <h2>${name}</h2>
+              ${meta}
+              ${instrumentsHtml}
+              ${concertsHtml}
+            </div>
+            ${photoHtml}
+          </div>
+        `;
+      })
+      .catch(err => {
+        console.error('Member load error:', err);
+        document.getElementById('app').innerHTML = `
+          <div class="error-message">
+            <p>❌ Ошибка загрузки данных участника</p>
+            <p>${err.message || 'Неизвестная ошибка'}</p>
+          </div>`;
+      });
+  </script>
+</body>
+</html>
