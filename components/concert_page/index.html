@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Концерт</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../../lib/styles.css">
+  <style>
+    body {
+      font-family: 'Inter', sans-serif;
+      margin: 0;
+      padding: 0;
+      background: #fff;
+      color: var(--text);
+      line-height: 1.5;
+    }
+    .container {
+      max-width: 1000px;
+      margin: 0 auto;
+      padding: 24px 16px;
+    }
+    .concert-detail {
+      background: white;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 24px;
+      margin-bottom: 20px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.04);
+    }
+    h2 {
+      margin: 0 0 12px;
+      color: var(--primary);
+      font-size: 1.6rem;
+    }
+    .concert-meta {
+      color: var(--text-muted);
+      font-size: 0.95rem;
+      margin-bottom: 20px;
+    }
+    .section-title {
+      margin: 24px 0 12px;
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: var(--text);
+    }
+    .list {
+      margin: 0;
+      padding-left: 20px;
+    }
+    .list li {
+      margin-bottom: 6px;
+    }
+    .info-block {
+      margin-top: 20px;
+      padding-top: 20px;
+      border-top: 1px solid var(--border);
+      white-space: pre-wrap;
+    }
+    .loading,
+    .error-message {
+      text-align: center;
+      padding: 30px;
+      color: var(--text-muted);
+    }
+  </style>
+</head>
+<body>
+  <div class="container" id="app">
+    <div class="loading">Загрузка...</div>
+  </div>
+
+  <!-- Подключаем компоненты -->
+  <script src="../../lib/chords.js"></script>
+  <script src="../../lib/player.js"></script>
+
+  <script type="module">
+    import { fetchConcerts, fetchMembers, fetchSongs } from '../../lib/fetch-songs.js';
+
+    const params = new URLSearchParams(window.location.search);
+    const concertId = params.get('id');
+
+    if (!concertId) {
+      document.getElementById('app').innerHTML = `
+        <div class="error-message">
+          <p>❌ Не указан ID концерта</p>
+        </div>`;
+      throw new Error('No concert ID');
+    }
+
+    // Парсинг участников
+    function parseMembers(membersStr, membersMap) {
+      if (!membersStr) return [];
+      return membersStr.split('|').map(part => {
+        const trimmed = part.trim();
+        if (!trimmed) return null;
+
+        // Проверяем, начинается ли с @
+        if (trimmed.startsWith('@')) {
+          const id = trimmed.substring(1).split(' - ')[0].trim();
+          const instrument = trimmed.includes(' - ') ? trimmed.split(' - ')[1].trim() : '';
+          const member = membersMap.get(id);
+          if (member) {
+            const name = member.NAME || id;
+            const link = `<a href="/members?id=${encodeURIComponent(id)}">${name}</a>`;
+            return instrument ? `${link} — ${instrument}` : link;
+          } else {
+            return `${id}${instrument ? ` — ${instrument}` : ''}`;
+          }
+        } else {
+          // Обычное имя с возможным инструментом
+          if (trimmed.includes(' - ')) {
+            const [name, instr] = trimmed.split(' - ').map(s => s.trim());
+            return `${name} — ${instr}`;
+          } else {
+            return trimmed;
+          }
+        }
+      }).filter(Boolean);
+    }
+
+    // Парсинг песен
+    function parseSongs(songsStr, songsMap) {
+      if (!songsStr) return [];
+      return songsStr.split('|').map(part => {
+        const trimmed = part.trim();
+        if (!trimmed) return null;
+
+        if (trimmed.startsWith('@')) {
+          const id = trimmed.substring(1);
+          const song = songsMap.get(id);
+          if (song) {
+            const title = song.TITLE || id;
+            return `<a href="/song?id=${encodeURIComponent(id)}">${title}</a>`;
+          } else {
+            return id;
+          }
+        } else {
+          return trimmed;
+        }
+      }).filter(Boolean);
+    }
+
+    // Загрузка всех данных
+    Promise.all([fetchConcerts(), fetchMembers(), fetchSongs()])
+      .then(([concerts, members, songs]) => {
+        // Создаём мапы для быстрого поиска
+        const membersMap = new Map(members.map(m => [String(m.ID), m]));
+        const songsMap = new Map(songs.map(s => [String(s.ID), s]));
+
+        const concert = concerts.find(c => String(c.ID) === String(concertId));
+        const el = document.getElementById('app');
+
+        if (!concert) {
+          el.innerHTML = `
+            <div class="error-message">
+              <p>❌ Концерт с ID "${concertId}" не найден</p>
+            </div>`;
+          return;
+        }
+
+        const title = (concert.TITLE && String(concert.TITLE).trim()) || 'Без названия';
+        const meta = concert.formattedDate ? `<div class="concert-meta">${concert.formattedDate}</div>` : '';
+
+        // Парсим участников и песни
+        const membersList = parseMembers(concert.MEMBERS, membersMap);
+        const songsList = parseSongs(concert.SONGS, songsMap);
+
+        let membersHtml = '';
+        if (membersList.length > 0) {
+          membersHtml = `
+            <h3 class="section-title">Участники</h3>
+            <ul class="list">${membersList.map(m => `<li>${m}</li>`).join('')}</ul>
+          `;
+        }
+
+        let songsHtml = '';
+        if (songsList.length > 0) {
+          songsHtml = `
+            <h3 class="section-title">Песни</h3>
+            <ul class="list">${songsList.map(s => `<li>${s}</li>`).join('')}</ul>
+          `;
+        }
+
+        const audioHtml = concert.URL ? TildaComponents.renderAudio(concert.URL) : '';
+
+        let infoHtml = '';
+        if (concert.INFO && concert.INFO.trim()) {
+          infoHtml = `<div class="info-block">${concert.INFO.trim()}</div>`;
+        }
+
+        el.className = 'container';
+        el.innerHTML = `
+          <div class="concert-detail">
+            <h2>${title}</h2>
+            ${meta}
+            ${membersHtml}
+            ${songsHtml}
+            ${audioHtml}
+            ${infoHtml}
+          </div>
+        `;
+      })
+      .catch(err => {
+        console.error('Concert load error:', err);
+        document.getElementById('app').innerHTML = `
+          <div class="error-message">
+            <p>❌ Ошибка загрузки данных концерта</p>
+            <p>${err.message || 'Неизвестная ошибка'}</p>
+          </div>`;
+      });
+  </script>
+</body>
+</html>
