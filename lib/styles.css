@@ -1,8 +1,9 @@
 :root {
-  --primary: #0b7070;
+  --primary: #e47b17;
   --text: #1a1a1a;
   --text-muted: #757575;
   --border: #eaeaea;
+  --bg-card: #f8fafc;
 }
 
 /* === Контейнер текста с аккордами === */
