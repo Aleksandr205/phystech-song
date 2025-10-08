@@ -7,61 +7,129 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="../lib/styles.css">
   <style>
+    :root {
+      --primary: #2563eb;
+      --text: #1e293b;
+      --text-muted: #64748b;
+      --border: #e2e8f0;
+      --bg-card: #f8fafc;
+    }
+
     body {
       font-family: 'Inter', sans-serif;
       margin: 0;
       padding: 0;
       background: #fff;
       color: var(--text);
-      line-height: 1.5;
+      line-height: 1.6;
     }
+
     .container {
       max-width: 1000px;
       margin: 0 auto;
       padding: 24px 16px;
     }
+
     .concert-detail {
       background: white;
       border: 1px solid var(--border);
-      border-radius: 10px;
-      padding: 24px;
-      margin-bottom: 20px;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.04);
+      border-radius: 12px;
+      padding: 28px;
+      margin-bottom: 24px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.05);
     }
+
     h2 {
-      margin: 0 0 12px;
+      margin: 0 0 16px;
       color: var(--primary);
-      font-size: 1.6rem;
+      font-size: 1.8rem;
+      font-weight: 600;
     }
+
     .concert-meta {
       color: var(--text-muted);
       font-size: 0.95rem;
-      margin-bottom: 20px;
+      margin-bottom: 24px;
     }
+
     .section-title {
-      margin: 24px 0 12px;
-      font-size: 1.1rem;
+      margin: 28px 0 16px;
+      font-size: 1.25rem;
       font-weight: 600;
       color: var(--text);
+      display: flex;
+      align-items: center;
+      gap: 8px;
     }
+
+    .section-title::before {
+      content: "•";
+      color: var(--primary);
+      font-size: 1.4rem;
+    }
+
+    /* Стили для списков */
     .list {
+      list-style: none;
+      padding: 0;
       margin: 0;
-      padding-left: 20px;
+      display: grid;
+      gap: 10px;
     }
+
     .list li {
-      margin-bottom: 6px;
+      background: var(--bg-card);
+      padding: 12px 16px;
+      border-radius: 8px;
+      border-left: 3px solid var(--primary);
+      transition: background 0.2s, transform 0.15s;
     }
+
+    .list li:hover {
+      background: #edf2ff;
+      transform: translateY(-1px);
+    }
+
+    .list a {
+      color: var(--primary);
+      text-decoration: none;
+      font-weight: 500;
+    }
+
+    .list a:hover {
+      text-decoration: underline;
+    }
+
     .info-block {
-      margin-top: 20px;
-      padding-top: 20px;
+      margin-top: 24px;
+      padding-top: 24px;
       border-top: 1px solid var(--border);
       white-space: pre-wrap;
+      font-size: 0.95rem;
+      color: var(--text);
     }
+
     .loading,
     .error-message {
       text-align: center;
       padding: 30px;
       color: var(--text-muted);
+      font-size: 1.1rem;
+    }
+
+    /* Мобильная адаптация */
+    @media (max-width: 600px) {
+      .concert-detail {
+        padding: 20px;
+      }
+
+      h2 {
+        font-size: 1.5rem;
+      }
+
+      .section-title {
+        font-size: 1.15rem;
+      }
     }
   </style>
 </head>
@@ -95,7 +163,6 @@
         const trimmed = part.trim();
         if (!trimmed) return null;
 
-        // Проверяем, начинается ли с @
         if (trimmed.startsWith('@')) {
           const id = trimmed.substring(1).split(' - ')[0].trim();
           const instrument = trimmed.includes(' - ') ? trimmed.split(' - ')[1].trim() : '';
@@ -108,7 +175,6 @@
             return `${id}${instrument ? ` — ${instrument}` : ''}`;
           }
         } else {
-          // Обычное имя с возможным инструментом
           if (trimmed.includes(' - ')) {
             const [name, instr] = trimmed.split(' - ').map(s => s.trim());
             return `${name} — ${instr}`;
@@ -144,7 +210,6 @@
     // Загрузка всех данных
     Promise.all([fetchConcerts(), fetchMembers(), fetchSongs()])
       .then(([concerts, members, songs]) => {
-        // Создаём мапы для быстрого поиска
         const membersMap = new Map(members.map(m => [String(m.ID), m]));
         const songsMap = new Map(songs.map(s => [String(s.ID), s]));
 
@@ -162,7 +227,6 @@
         const title = (concert.TITLE && String(concert.TITLE).trim()) || 'Без названия';
         const meta = concert.formattedDate ? `<div class="concert-meta">${concert.formattedDate}</div>` : '';
 
-        // Парсим участников и песни
         const membersList = parseMembers(concert.MEMBERS, membersMap);
         const songsList = parseSongs(concert.SONGS, songsMap);
 
@@ -195,8 +259,8 @@
             <h2>${title}</h2>
             ${meta}
             ${membersHtml}
-            ${songsHtml}
             ${audioHtml}
+            ${songsHtml}
             ${infoHtml}
           </div>
         `;

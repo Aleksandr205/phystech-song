@@ -7,84 +7,202 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="../lib/styles.css">
   <style>
+    :root {
+      --primary: #2563eb;
+      --text: #1e293b;
+      --text-muted: #64748b;
+      --border: #e2e8f0;
+      --bg-card: #f8fafc;
+    }
+
     body {
       font-family: 'Inter', sans-serif;
       margin: 0;
       padding: 0;
       background: #fff;
       color: var(--text);
-      line-height: 1.5;
+      line-height: 1.6;
     }
+
     .container {
       max-width: 1000px;
       margin: 0 auto;
       padding: 24px 16px;
     }
+
     .member-detail {
       background: white;
       border: 1px solid var(--border);
-      border-radius: 10px;
-      padding: 24px;
-      margin-bottom: 20px;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.04);
+      border-radius: 12px;
+      padding: 28px;
+      margin-bottom: 24px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.05);
       display: flex;
       flex-wrap: wrap;
-      gap: 24px;
+      gap: 28px;
     }
+
     .member-info {
       flex: 1;
       min-width: 300px;
     }
-    .member-photo {
-      flex: 0 0 200px;
-      text-align: center;
+
+    .member-header {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 16px;
     }
-    .member-photo img {
-      width: 100%;
-      max-width: 200px;
-      height: auto;
-      border-radius: 8px;
-      border: 1px solid var(--border);
-    }
+
     h2 {
-      margin: 0 0 12px;
+      margin: 0;
       color: var(--primary);
       font-size: 1.8rem;
+      font-weight: 600;
     }
+
+    .status-badge {
+      display: inline-block;
+      padding: 2px 10px;
+      border-radius: 50px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: white;
+      background: rgba(148, 163, 184, 0.7); /* default: gray */
+      line-height: 1.4;
+    }
+
+    .status-badge.status-руководитель {
+      background: rgba(139, 92, 246, 0.8); /* фиолетовый */
+    }
+
+    .status-badge.status-зам {
+      background: rgba(56, 189, 248, 0.8); /* сине-голубой */
+    }
+
     .member-meta {
       color: var(--text-muted);
       font-size: 0.95rem;
       margin-bottom: 20px;
     }
+
     .section-title {
-      margin: 24px 0 12px;
-      font-size: 1.1rem;
+      margin: 28px 0 16px;
+      font-size: 1.25rem;
       font-weight: 600;
       color: var(--text);
+      display: flex;
+      align-items: center;
+      gap: 8px;
     }
-    .instruments-text {
-      margin-bottom: 20px;
-      white-space: pre-wrap;
+
+    .section-title::before {
+      content: "•";
+      color: var(--primary);
+      font-size: 1.4rem;
     }
+
+    .instruments-text,
+    .contact-link {
+      margin-bottom: 24px;
+      padding: 14px;
+      background: var(--bg-card);
+      border-radius: 8px;
+      border-left: 3px solid var(--primary);
+      font-size: 1rem;
+      line-height: 1.5;
+    }
+
+    .contact-link a {
+      color: var(--primary);
+      font-weight: 500;
+      text-decoration: none;
+    }
+
+    .contact-link a:hover {
+      text-decoration: underline;
+    }
+
+    /* Список концертов */
     .concerts-list {
+      list-style: none;
+      padding: 0;
       margin: 0;
-      padding-left: 20px;
+      display: grid;
+      gap: 10px;
     }
+
     .concerts-list li {
-      margin-bottom: 8px;
+      background: var(--bg-card);
+      padding: 12px 16px;
+      border-radius: 8px;
+      border-left: 3px solid var(--primary);
+      transition: background 0.2s, transform 0.15s;
     }
+
+    .concerts-list li:hover {
+      background: #edf2ff;
+      transform: translateY(-1px);
+    }
+
+    .concerts-list a {
+      color: var(--primary);
+      text-decoration: none;
+      font-weight: 500;
+    }
+
+    .concerts-list a:hover {
+      text-decoration: underline;
+    }
+
+    .member-photo {
+      flex: 0 0 200px;
+      text-align: center;
+    }
+
+    .member-photo img {
+      width: 100%;
+      max-width: 200px;
+      height: auto;
+      border-radius: 10px;
+      border: 1px solid var(--border);
+      box-shadow: 0 2px 6px rgba(0,0,0,0.06);
+    }
+
     .loading,
     .error-message {
       text-align: center;
       padding: 30px;
       color: var(--text-muted);
+      font-size: 1.1rem;
     }
+
     a {
       color: var(--primary);
       text-decoration: none;
     }
     a:hover {
       text-decoration: underline;
+    }
+
+    @media (max-width: 768px) {
+      .member-detail {
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+      }
+      .member-photo {
+        order: -1;
+        margin-bottom: 16px;
+      }
+      .member-header {
+        justify-content: center;
+      }
+      .instruments-text,
+      .contact-link {
+        text-align: left;
+      }
     }
   </style>
 </head>
@@ -93,7 +211,6 @@
     <div class="loading">Загрузка...</div>
   </div>
 
-  <!-- Подключаем компоненты (если нужны) -->
   <script src="../lib/chords.js"></script>
   <script src="../lib/player.js"></script>
 
@@ -101,15 +218,12 @@
     // === 1. Настройка навигации через postMessage ===
     function handleNavigation(path) {
       if (window.parent && window.parent !== window) {
-        // Отправляем в родительское окно (Tilda)
         window.parent.postMessage({ type: 'NAVIGATE', path: path }, '*');
       } else {
-        // Если не во фрейме — обычный переход
         window.location.href = path;
       }
     }
 
-    // Перехватываем все клики по внутренним ссылкам
     document.addEventListener('click', function(e) {
       const link = e.target.closest('a[href^="/"]');
       if (link) {
@@ -124,7 +238,23 @@
       }
     });
 
-    // === 2. Загрузка данных ===
+    // === 2. Форматирование даты ===
+    function formatDateForDisplay(dateStr) {
+      if (!dateStr) return null;
+      const date = new Date(dateStr);
+      if (isNaN(date.getTime())) return null;
+
+      const months = [
+        'января', 'февраля', 'марта', 'апреля', 'мая', 'июня',
+        'июля', 'августа', 'сентября', 'октября', 'ноября', 'декабря'
+      ];
+      const day = date.getDate();
+      const month = months[date.getMonth()];
+      const year = date.getFullYear();
+      return `${day} ${month} ${year}`;
+    }
+
+    // === 3. Загрузка данных ===
     import { fetchMembers, fetchConcerts } from '../lib/fetch-songs.js';
 
     const params = new URLSearchParams(window.location.search);
@@ -163,12 +293,29 @@
           return;
         }
 
-        const name = (member.NAME && String(member.NAME).trim()) || 'Без имени';
-        const joinDate = member.formattedDate || '';
-        const photoUrl = member.PHOTO_URL && String(member.PHOTO_URL).trim();
-        const instruments = member.INSTRUMENTS && String(member.INSTRUMENTS).trim();
+        const name = (member.NAME?.trim()) || 'Без имени';
+        const status = member.STATUS?.trim() || '';
+        const joinDateRaw = member.JOIN_DATE?.trim(); // новое поле
+        const photoUrl = member.PHOTO_URL?.trim();
+        const instruments = member.INSTRUMENTS?.trim();
+        const contact = member.CONTACT?.trim();
 
-        const memberConcerts = concerts.filter(c => isMemberInConcert(c, memberId));
+        // Форматируем дату вступления
+        const joinDateFormatted = joinDateRaw ? formatDateForDisplay(joinDateRaw) : null;
+        const withUsSince = joinDateFormatted ? `с нами с ${joinDateFormatted}` : '';
+
+        // Определяем класс для бейджа статуса
+        let statusClass = '';
+        if (status.toLowerCase() === 'руководитель') {
+          statusClass = 'status-руководитель';
+        } else if (status.toLowerCase() === 'зам') {
+          statusClass = 'status-зам';
+        }
+
+        let statusBadgeHtml = '';
+        if (status) {
+          statusBadgeHtml = `<span class="status-badge ${statusClass}">${status}</span>`;
+        }
 
         let photoHtml = '';
         if (photoUrl) {
@@ -180,6 +327,13 @@
           instrumentsHtml = `<div class="instruments-text">${instruments}</div>`;
         }
 
+        let contactHtml = '';
+        if (contact) {
+          const contactUrl = contact.startsWith('http') ? contact : `https://${contact}`;
+          contactHtml = `<div class="contact-link">Контакт: <a href="${contactUrl}" target="_blank" rel="noopener">${contact}</a></div>`;
+        }
+
+        const memberConcerts = concerts.filter(c => isMemberInConcert(c, memberId));
         let concertsHtml = '';
         if (memberConcerts.length > 0) {
           const concertItems = memberConcerts.map(c => {
@@ -192,17 +346,21 @@
           `;
         }
 
-        const meta = joinDate ? `<div class="member-meta">В группе с: ${joinDate}</div>` : '';
+        const meta = withUsSince ? `<div class="member-meta">${withUsSince}</div>` : '';
 
         el.innerHTML = `
           <div class="member-detail">
+            ${photoHtml}
             <div class="member-info">
-              <h2>${name}</h2>
+              <div class="member-header">
+                <h2>${name}</h2>
+                ${statusBadgeHtml}
+              </div>
               ${meta}
               ${instrumentsHtml}
+              ${contactHtml}
               ${concertsHtml}
             </div>
-            ${photoHtml}
           </div>
         `;
       })
